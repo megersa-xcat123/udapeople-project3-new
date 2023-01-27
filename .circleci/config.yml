@@ -1,0 +1,52 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [frontend-build]
+      - run:
+          name: Build front-end
+          working_directory: ./frontend
+          command: |
+            # Your code here
+            npm install
+            npm run build
+            exit 1
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-build
+  
+  # build backend code
+  build-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cache:
+          keys: [backend-build]
+      - run:
+          name: Back-end build
+          command: |
+             # Your code here
+             npm install
+             npm run build
+             exit 1
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  workflow-project:
+    jobs:
+      - build-frontend
+      - build-backend
