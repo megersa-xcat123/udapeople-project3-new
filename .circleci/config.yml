@@ -55,13 +55,7 @@ jobs:
       - run:
           name: Install junit test 
           working_directory: ./frontend
-          command: npm install --save-dev jest-junit
-      - run:
-          name: Run tests with JUnit as reporter
-          working_directory: ./frontend
-          command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd && ls -la /tmp
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./test_results
+          command: npm install test
       - store_test_results:
           path: ./frontend/test_results
       - store_artifacts:
@@ -83,17 +77,12 @@ jobs:
       - run:
           name: Install junit coverage reporter
           working_directory: ./backend
-          command: npm install --save-dev jest-junit
-      - run:
-          name: Run tests with JUnit as reporter
-          working_directory: ./backend
-          command: npm test -- --ci --runInBand --reporters=default --reporters=jest-junit && pwd
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./test_results
+          command: npm install test
       - store_test_results:
           path: ./backend/test_results
       - store_artifacts:
           path: ./backend/test_results
+          
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
