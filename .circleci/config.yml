@@ -8,6 +8,7 @@ orbs:
   slack: circleci/slack@4.12.1
   
 jobs:
+  
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -128,12 +129,6 @@ jobs:
           key: scanbackend-build
 
   ################
-  deploy-infrastructure:
-    docker:
-      # Docker image here that supports AWS CLI
-      docker:
-      - image: amazon/aws-cli
-    steps:
   deploy-infrastructure:
      docker:
       - image: amazon/aws-cli
