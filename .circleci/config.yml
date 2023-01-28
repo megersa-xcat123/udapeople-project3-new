@@ -89,26 +89,24 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
-          name: Frontend against security vulnerabilities
+          name: Check Frontend against security vulnerabilities
           working_directory: ./frontend
-          command: |
-            npm install
-            npm audit --audit-level=critical
-            npm audit fix
+          command: npm audit --audit-level=critical
 
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
-          name: backend against security vulnerabilities
+          name: Check Backend against security vulnerabilities
           working_directory: ./backend
-          command: |
-            npm install
-            npm audit --audit-level=critical
-            npm audit fix
+          command: npm audit --audit-level=critical
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
