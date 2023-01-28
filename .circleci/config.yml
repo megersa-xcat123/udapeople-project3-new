@@ -6,7 +6,20 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 orbs:
   slack: circleci/slack@4.12.1
-  
+
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:13.8.0
+  python:
+    docker:
+      - image: python:3.9.0-alpine
+  aws:
+    docker:
+      - image: amazon/aws-cli
+
+
 jobs:
   
   build-frontend:
@@ -135,14 +148,16 @@ jobs:
      steps:
       - checkout 
       - run:
+          name: Install dependencies
+          command: yum install -y tar gzip
+      - run:
           name: Ensure back-end infrastructure exists
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople
-            
+              --tags project=udapeople  
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -167,7 +182,29 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
 
-      # Here's where you will add some code to rollback on failure   
+     # Here's where you will add some code to rollback on failure  
+
+  configure-infrastructure:
+    executor: python
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"]
+      - run:
+          name: Install dependencies
+          working_directory: ./.circleci/ansible
+          command: |
+            apk add --update ansible
+            ansible --version
+      - run:
+          name: Configure server
+          working_directory: ./.circleci/ansible
+          command: |
+            pwd &&
+            ls -la
+            cat inventory
+            ansible-playbook -i inventory configure-server.yaml
+
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
