@@ -125,6 +125,7 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: scanbackend-build
+<<<<<<< HEAD
   ################
   deploy-infrastructure:
     docker:
@@ -132,6 +133,12 @@ jobs:
       docker:
       - image: amazon/aws-cli
     steps:
+=======
+  deploy-infrastructure:
+     docker:
+      - image: amazon/aws-cli
+     steps:
+>>>>>>> 99fd8ebac83c7bca9f798d464eb4be99bc53180f
       - checkout 
       - run:
           name: Ensure back-end infrastructure exists
@@ -140,9 +147,13 @@ jobs:
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+<<<<<<< HEAD
               --tags project=udapeople
               
               
+=======
+              --tags project=udapeople    
+>>>>>>> 99fd8ebac83c7bca9f798d464eb4be99bc53180f
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -166,7 +177,10 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
+<<<<<<< HEAD
       # Here's where you will add some code to rollback on failure   
+=======
+>>>>>>> 99fd8ebac83c7bca9f798d464eb4be99bc53180f
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
@@ -190,4 +204,8 @@ workflows:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
+<<<<<<< HEAD
               only: [master]
+=======
+              only: [master]
+>>>>>>> 99fd8ebac83c7bca9f798d464eb4be99bc53180f
