@@ -89,13 +89,11 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: Check Frontend against security vulnerabilities
           working_directory: ./frontend
           command: |
-            npm install
+            npm install npm@latest -g
             npm audit --audit-level=critical
             npm audit fix --audit-level=critical --force
 
@@ -108,7 +106,7 @@ jobs:
           name: Check Backend against security vulnerabilities
           working_directory: ./backend
           command: | 
-            npm install
+            npm install npm@latest -g
             npm audit --audit-level=critical
             npm audit fix --audit-level=critical --force
 
