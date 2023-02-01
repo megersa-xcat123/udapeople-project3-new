@@ -241,8 +241,8 @@ jobs:
     steps:
       - checkout #-code from git
       - add_ssh_keys:
-          - fingerprints:
-              - "a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"
+          fingerprints:
+            - "a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"
        #Add ssh keys with fingerprint
       - attach_workspace: #attach workspace
           at: ~/
@@ -254,9 +254,7 @@ jobs:
             cd .circlci/ansible
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
-      - destroy-environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+      - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
   
@@ -284,9 +282,7 @@ jobs:
             then
              cul --insecure https://kvdb.io/5dR7n4E8kRzBgGRhLTTrZu/migration_${CIRCLE_WORKFLOW_ID:0:7} -D '1'
             fi
-      - destroy_environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+      - destroy_environment:  
       #- revert_migrations
     
      # Here's where you will add some code to rollback on failure 
@@ -316,5 +312,5 @@ workflows:
               only: [master]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
+      # - run-migrations:
+      #     requires: [configure-infrastructure]
