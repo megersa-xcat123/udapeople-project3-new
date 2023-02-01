@@ -184,26 +184,26 @@ jobs:
 
      # Here's where you will add some code to rollback on failure  
 
-  configure-infrastructure:
-    executor: python
-    steps:
-      - checkout
-      - add_ssh_keys:
-          fingerprints: ["a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"]
-      - run:
-          name: Install dependencies
-          working_directory: ./.circleci/ansible
-          command: |
-            apk add --update ansible
-            ansible --version
-      - run:
-          name: Configure server
-          working_directory: ./.circleci/ansible
-          command: |
-            pwd &&
-            ls -la
-            cat inventory
-            ansible-playbook -i inventory configure-server.yaml
+#   configure-infrastructure:
+#     executor: python
+#     steps:
+#       - checkout
+#       - add_ssh_keys:
+#           fingerprints: ["a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"]
+#       - run:
+#           name: Install dependencies
+#           working_directory: ./.circleci/ansible
+#           command: |
+#             apk add --update ansible
+#             ansible --version
+#       - run:
+#           name: Configure server
+#           working_directory: ./.circleci/ansible
+#           command: |
+#             pwd &&
+#             ls -la
+#             cat inventory
+#             ansible-playbook -i inventory configure-server.yaml
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
