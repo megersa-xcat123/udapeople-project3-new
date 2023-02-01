@@ -230,24 +230,21 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
 
+
+
 configure-infrastructure:
-   docker:
-      # Docker image here that supports Ansible
+    docker:
       - image: cimg/base:stable 
-   steps:
-      - Checkout #-code from git
+      # Docker image here that supports Ansible
+
+    steps:
+      - checkout #-code from git
       - add_ssh_keys:
           - fingerprint:
               - "a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"
-       #Add ssh keys with fingerprint
-      - attach_workspace: #attach workspace
+      - attach_workspace: 
           at: ~/
       - install_ansible
-      # - run:
-      #     name: Install dependencies
-      #     command: |
-      #       # Your code here
-      #       exit 1
       - run:
           name: Configure server
           command: |
@@ -256,15 +253,14 @@ configure-infrastructure:
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
             exit 1
-      - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
-run-migrations:
+  run-migrations:
     docker:
       # Docker image here that supports NodeJS
       - image: circleci/node:13.8.0
     steps:
-      # Checkout code from git
+      - checkout
       - run:
           name: Run migrations
           command: |
@@ -272,7 +268,7 @@ run-migrations:
             cd  backend
             npm install
             npm run migration > migration_dump.txt
-            exit 1
+            
       - run:
           name: Send migration results to memstash
           command: |
@@ -283,8 +279,61 @@ run-migrations:
             fi
       - destroy_environment
       - revert_migrations
-            exit 1
-     # Here's where you will add some code to rollback on failure 
+            
+     # Here's where you will add some code to rollback on failure    
+
+
+
+# configure-infrastructure:
+#    docker:
+#       # Docker image here that supports Ansible
+#       - image: cimg/base:stable 
+#    steps:
+#       - Checkout #-code from git
+#       - add_ssh_keys:
+#           - fingerprint:
+#               - "a8:d0:51:94:4d:08:c5:78:55:d1:35:a8:47:8d:67:5d"
+#        #Add ssh keys with fingerprint
+#       - attach_workspace: #attach workspace
+#           at: ~/
+#       - install_ansible
+#       - run:
+#           name: Configure server
+#           command: |
+#             # Your code here
+#             cd .circlci/ansible
+#             cat inventory.txt
+#             ansible-playbook -i inventory.txt configure-server.yml
+#             exit 1
+#       - destroy-environment
+#       # Here's where you will add some code to rollback on failure      
+
+# run-migrations:
+#     docker:
+#       # Docker image here that supports NodeJS
+#       - image: circleci/node:13.8.0
+#     steps:
+#       # Checkout code from git
+#       - run:
+#           name: Run migrations
+#           command: |
+#             # Your code here
+#             cd  backend
+#             npm install
+#             npm run migration > migration_dump.txt
+#             exit 1
+#       - run:
+#           name: Send migration results to memstash
+#           command: |
+#             # Your code here
+#             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+#             then
+#              cul --insecure https://kvdb.io/${(KVDB_BUCKET}/migration_${CIRCLE_WORKFLOW_ID:0:7} -D '1'
+#             fi
+#       - destroy_environment
+#       - revert_migrations
+#             exit 1
+#      # Here's where you will add some code to rollback on failure 
 
 
 
