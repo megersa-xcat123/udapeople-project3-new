@@ -7,7 +7,6 @@ version: 2.1
 orbs:
   slack: circleci/slack@4.12.1
 
-
 executors:
   node:
     docker:
@@ -255,7 +254,7 @@ configure-infrastructure:
             exit 1
       # Here's where you will add some code to rollback on failure      
 
-  run-migrations:
+run-migrations:
     docker:
       # Docker image here that supports NodeJS
       - image: circleci/node:13.8.0
