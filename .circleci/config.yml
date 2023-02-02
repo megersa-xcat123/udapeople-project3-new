@@ -248,7 +248,7 @@ jobs:
       - attach_workspace: #attach workspace
           at: ~/
       #- install_ansible
-       - run:
+      - run:
           name: Install AWS CLI dependencies
           working_directory: /tmp
           command: |
