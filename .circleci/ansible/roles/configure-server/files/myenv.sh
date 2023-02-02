@@ -1,7 +1,7 @@
  export TYPEORM_CONNECTION=postgres
  export TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts
  export TYPEORM_HOST=database-1.civ4d10pu7xs.us-east-1.rds.amazonaws.com
- export TYPEORM_PORT: 5432
+ export TYPEORM_PORT: 543
  export TYPEORM_USERNAME=postgres
  export TYPEORM_PASSWORD=postgres
  export TYPEORM_DATABASE=postgres
