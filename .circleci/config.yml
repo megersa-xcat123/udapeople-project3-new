@@ -244,8 +244,8 @@ jobs:
           name: Configure server
           working_directory: .circleci/ansible
           command: |
-            cat inventory.txt
-            ansible-playbook -i inventory.txt .circleci/ansible/configure-server.yml
+            cat inventory
+            ansible-playbook -i inventory deploy-server.yaml -vv
       - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
@@ -275,8 +275,6 @@ jobs:
     
      # Here's where you will add some code to rollback on failure 
 
-
-
 workflows:
   workflow-project:
     jobs:
@@ -302,5 +300,5 @@ workflows:
       - configure-infrastructure:
           requires: [deploy-infrastructure]
       - run-migrations:
-          requires: 
-            - configure-infrastructure
+          # requires: 
+          #   - configure-infrastructure
