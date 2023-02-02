@@ -237,7 +237,7 @@ jobs:
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
-      - image: cimg/base:stable 
+      - image: python:3.9.0-alpine 
     steps:
       - checkout #-code from git
       - add_ssh_keys:
@@ -246,12 +246,20 @@ jobs:
        #Add ssh keys with fingerprint
       - attach_workspace: #attach workspace
           at: ~/
-      - install_ansible
+      #- install_ansible
+      - run:
+          name: Install dependencies
+          working_directory: ./.circleci/ansible
+          command: |
+            apk add --update ansible
+            ansible --version
       - run:
           name: Configure server
           command: |
             # Your code here
             cd .circlci/ansible
+            pwd &&
+            ls -la
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
