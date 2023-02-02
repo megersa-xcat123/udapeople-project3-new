@@ -33,10 +33,8 @@ commands:
           command: |
             # Your code here
             aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
-            aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.workflow_id >>
-            aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.workflow_id >>
-            exit 1
-
+            aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
+            aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>        
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
@@ -55,6 +53,7 @@ commands:
             then
               cd ~/project/backend
               npm install
+              npm run migrations:revert
               #Add revert code here. You can find this in the Getting Started section.
               exit 1
             fi
@@ -208,7 +207,7 @@ jobs:
                    
       - run:
           name: Add back-end ip to ansible inventory
-          working_directory: ./.circleci/ansible
+          working_directory: .circleci/ansible
           command: |
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
@@ -237,26 +236,20 @@ jobs:
     
       - run:
           name: Install dependencies
-          working_directory: ./.circleci/ansible
+          working_directory: .circleci/ansible
           command: |
             pip install awscli
             apk add --update ansible
             ansible --version
       - run:
           name: Configure server
-          working_directory: ./.circleci/ansible
+          working_directory: .circleci/ansible
           command: |
-            # Your code here
-            ls -la
             cat inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       - destroy-environment
       # Here's where you will add some code to rollback on failure      
 
-  
-  
-  
-  
   run-migrations:
     docker:
       - image: circleci/node:13.8.0
