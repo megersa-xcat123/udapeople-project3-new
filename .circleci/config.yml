@@ -239,8 +239,10 @@ jobs:
           name: Install dependencies
           working_directory: ./.circleci/ansible
           command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
             apk add --update ansible
-            pip install awscli
             ansible --version
       - run:
           name: Configure server
