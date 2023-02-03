@@ -32,7 +32,7 @@ commands:
           when: on_fail
           command: |
             # Your code here
-            aws s3 rm s3://udapeople-<< parameters.workflow_id >> --recursive
+            aws s3 rm s3://udapeople-<<parameters.workflow_id>> --recursive
             aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.workflow_id>>
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.workflow_id>>        
   revert-migrations:
@@ -264,16 +264,18 @@ jobs:
             sudo ./aws/install
       - run:
           name: Run migrations
+          working_directory: ./backend
           command: |
-            # Your code here
-            cd  backend
+             # Your code here
+             # cd  backend
             npm install
+            npm audit fix --force
             npm audit fix --force
             npm audit fix --force
             npm audit fix --force
             npm run migrations > migration_dump.txt
 
-            exit 1
+           # exit 1
       - run:
           name: Send migration results to memstash
           command: |
