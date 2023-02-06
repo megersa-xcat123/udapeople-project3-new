@@ -41,7 +41,7 @@
 #     - configure-server
 ---
 - name: Configure udapeople infrastructure
-  hosts: all
+  hosts: web
   user: ubuntu
   gather_facts: false
   vars:
@@ -50,7 +50,7 @@
     - ansible_stdout_callback: yaml
   roles:
     - configure-server
-    # - configure-prometheus-node-exporter
+    # - configure-prometheus-node-exporter udapeole-388142339351
   environment:
     ENVIRONMENT: production
     TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION') }}"
