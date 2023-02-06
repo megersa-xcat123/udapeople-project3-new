@@ -238,7 +238,6 @@ jobs:
           working_directory: .circleci/ansible
           command: |
             pip install awscli
-            pip install openssh-server
             apk add --update ansible
             ansible --version
       - run:
