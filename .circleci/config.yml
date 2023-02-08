@@ -400,47 +400,31 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
               --output text )
+            echo ${BACKEND_PUBLIC_IP}
             export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
             if curl "${API_URL}/api/status" | grep "ok"
             then
-              return 0
+              exit 0
             else
-              return 1
+              exit 1
             fi
       - run:
           name: frontend smoke test
           command: |
             FORNTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
             echo $FORNTEND_WEBSITE
-            if curl -s ${URL} | grep "Welcome"
+            if curl -s ${FORNTEND_WEBSITE} | grep "Welcome"
             then
-              exit 0
+              exit 1
             else
               exit 1
             fi
       - destroy-environment
       - revert-migrations
-      # - run:
-      #     name: Backend smoke test.
-      #     command: |
-      #       # your code here
-      #       BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
-      #         --filters Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-      #         --output text )
-
-      #       export API_URL="http://${BACKEND_IP}:3030"
-      #       echo "${API_URL}"
-      #       if curl "${API_URL}/api/status" | grep "ok"
-      #       then
-      #         exit 0
-      #       else
-      #         exit 1
-      #       fi
-
+     
   
   cloudfront-update:
     docker:
