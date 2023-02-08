@@ -8,7 +8,12 @@
       src: ../../backend/dist
       dest: /home/ubuntu/uda_app
       recursive: true
-
+  - name: "install nodejs and npm"
+    become: yes
+    apt:
+      name: ["nodejs", "npm"]
+      state: latest
+      update_cache: yes
   - name: "copy node_modules"
     become: yes
     synchronize:
@@ -23,7 +28,8 @@
 
   - name: "start server"
     become: true
-    command: pm2 start -f ./main.js
+    command: |
+      pm2 start npm -- start
     environment:
       - TYPEORM_CONNECTION: "{{ lookup('env', 'TYPEORM_CONNECTION')}}"  
       - TYPEORM_ENTITIES: "{{ lookup('env', 'TYPEORM_ENTITIES')}}"
