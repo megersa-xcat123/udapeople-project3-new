@@ -417,23 +417,29 @@ jobs:
             echo $FORNTEND_WEBSITE
             if curl -s ${URL} | grep "Welcome"
             then
-              return 1
+              exit 0
             else
-              return 1
+              exit 1
             fi
-            
-      - run:
-          name: Backend smoke test.
-          command: |
-            # your code here
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok"
-            then
-              return 
-            else
-              return 1
-            fi
+      - destroy-environment
+      - revert-migrations
+      # - run:
+      #     name: Backend smoke test.
+      #     command: |
+      #       # your code here
+      #       BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+      #         --query 'Reservations[*].Instances[*].PublicIpAddress' \
+      #         --filters Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+      #         --output text )
+
+      #       export API_URL="http://${BACKEND_IP}:3030"
+      #       echo "${API_URL}"
+      #       if curl "${API_URL}/api/status" | grep "ok"
+      #       then
+      #         exit 0
+      #       else
+      #         exit 1
+      #       fi
 
   
   cloudfront-update:
@@ -466,6 +472,24 @@ jobs:
       - revert-migrations
       # Here's where you will add some code to rollback on failure  
 
+  # cleanup:
+  #   docker:
+  #     # Docker image here
+  #   steps:
+  #     # Checkout code from git
+  #     - run:
+  #         name: Get old stack workflow id
+  #         command: |
+  #           # your code here
+  #           export OldWorkflowID="the id here"
+  #           export STACKS=[] #put the list of stacks here
+  #     - run:
+  #         name: Remove old stacks and files
+  #         command: |
+  #           if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+  #           then
+  #             # your code here
+  #           fi
 
 workflows:
   workflow-project:
