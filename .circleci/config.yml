@@ -19,6 +19,37 @@ executors:
       - image: amazon/aws-cli
 
 commands:
+  install_ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -yy less
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+  
+  install_nodejs:
+    description: Install Nodejs 13
+    steps:
+      - run:
+          name: Install NodeJS 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            sudo apt install -y nodejs
+  
+  install_awscli:
+    description: Install AWSCLI
+    steps:
+      - run:
+          name: Install AWSCLI
+          command: |
+            sudo apt-get update && sudo apt-get install -yy less
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+  
   destroy-environment:
     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
     parameters:
@@ -53,6 +84,7 @@ commands:
               npm install
               npm run migrations:revert
             fi
+  
 jobs:
   
   build-frontend:
@@ -270,20 +302,7 @@ jobs:
             cd backend
             npm install
             npm run migrations > migrations_dump.txt
-          # - run:
-          # name: Run migrations
-          # working_directory: ./backend
-          # command: |
-          #   npm install
-          #   npm audit fix --force
-          #   npm audit fix --force
-          #   npm audit fix --force
-          #   npm audit fix --force
-          #   npm audit fix --audit-level=critical --force
-          #   npm audit fix --audit-level=critical --force
-          #   npm run migrations > migration_dump.txt
-
-           # exit 1
+         
       - run:
           name: Send migration results to memstash
           command: |
@@ -297,6 +316,74 @@ jobs:
       - revert-migrations
     
      # Here's where you will add some code to rollback on failure 
+  
+  deploy-frontend:
+    docker:
+      - image: cimg/base:stable
+
+      # Docker image here that supports AWS CLI
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["c9:11:7b:06:a9:fb:53:a3:ec:a3:59:55:63:94:73:a9"]
+      - attach_workspace: #attach workspace
+          at: ~/
+      - install_nodejs
+      - install_awscli
+      - install_ansible
+      - run:
+          name: Get backend url
+          command: |
+            # your code here
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --output text )
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
+            echo API_URL ="http://${BACKEND_IP}:3030"  >> frontend/.env
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            # your code here
+            cd frontend
+            sudo npm install -g npm@latest
+            rm -rf node_modules
+            npm install 
+            npm run build
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+      - destroy-environment
+      - revert-migrations
+      # Here's where you will add some code to rollback on failure     
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: ["c9:11:7b:06:a9:fb:53:a3:ec:a3:59:55:63:94:73:a9"]
+      - attach_workspace: #attach workspace
+          at: ~/
+      - install_nodejs
+      - install_awscli
+      - install_ansible
+      - run:
+          name: Deploy backend
+          command: |
+            # your code here
+            cd backend
+            npm i
+            npm run build
+            cd ..
+            # Zip the directory
+            tar -C backend -czvf artifact.tar.gz .
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
+      # Here's where you will add some code to rollback on failure  
 
 workflows:
   workflow-project:
@@ -324,3 +411,7 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
