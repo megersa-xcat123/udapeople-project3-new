@@ -232,7 +232,7 @@ jobs:
     steps:
       - checkout #-code from git
       - add_ssh_keys:
-          fingerprints: ["4f:21:f1:ca:ab:a4:e4:e0:38:07:d5:e2:0c:1c:89:51"]
+          fingerprints: ["c9:11:7b:06:a9:fb:53:a3:ec:a3:59:55:63:94:73:a9"]
        #Add ssh keys with fingerprint
       - attach_workspace: #attach workspace
           at: ~/
