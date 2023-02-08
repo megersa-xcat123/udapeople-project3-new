@@ -412,14 +412,14 @@ jobs:
       - run:
           name: frontend smoke test
           command: |
-          FORNTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
-          echo $FORNTEND_WEBSITE
-          if curl -s ${URL} | grep "Welcome"
-          then
-            return 1
-          else
-            return 1
-          fi
+            FORNTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
+            echo $FORNTEND_WEBSITE
+            if curl -s ${URL} | grep "Welcome"
+            then
+              return 1
+            else
+              return 1
+            fi
             
       - run:
           name: Backend smoke test.
