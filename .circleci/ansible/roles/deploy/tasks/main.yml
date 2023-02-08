@@ -38,8 +38,8 @@
     src: ~/project/artifact.tar.gz
     dest: /home/ubuntu/backend_app_dir/artifact.tar.gz
 
-- name: "Start App"
-  became: yes
+- name: "start server"
+  become: yes
   shell: |
     cd /home/ubuntu/backend_app_dir
     tar xzvf artifact.tar.gz
@@ -47,5 +47,5 @@
     npm run build
     pm2 stop all
     pm2 start npm -- start
-  
+
  
