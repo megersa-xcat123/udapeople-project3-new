@@ -389,7 +389,8 @@ jobs:
       - image: cimg/base:stable
     steps:
       # Checkout code from git
-      - checkut
+      - checkout
+      #- checkut
       - install_nodejs
       - install_awscli
       - run:
