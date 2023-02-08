@@ -384,62 +384,86 @@ jobs:
 
       # Here's where you will add some code to rollback on failure  
 
-  # smoke-test:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     # Checkout code from git
-  #     - checkut
-  #     - install_nodejs
-  #     - install_awscli
-  #     - run:
-  #         name: Get backend url
-  #         command: |
-  #           BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #             --filters Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-  #             --output text )
-  #           export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
-  #           echo ${BACKEND_PUBLIC_IP}
-  #           echo backend-${CIRCLE_WORKFLOW_ID:0:7}
-  #           echo ${API_URL}
-  #           if curl "${API_URL}/api/status" | grep "ok"
-  #           then
-  #             return 0
-  #           else
-  #             return 1
-  #           fi
-  #     - run:
-  #         name: frontend smoke test
-  #         command: |
+  smoke-test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      # Checkout code from git
+      - checkut
+      - install_nodejs
+      - install_awscli
+      - run:
+          name: Get backend url
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --output text )
+            export API_URL="http://${BACKEND_PUBLIC_IP}:3030"
+            echo ${BACKEND_PUBLIC_IP}
+            echo backend-${CIRCLE_WORKFLOW_ID:0:7}
+            echo ${API_URL}
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+              return 0
+            else
+              return 1
+            fi
+      - run:
+          name: frontend smoke test
+          command: |
+          FORNTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
+          echo $FORNTEND_WEBSITE
+          if curl -s ${URL} | grep "Welcome"
+          then
+            return 1
+          else
+            return 1
+          fi
             
-  #     - run:
-  #         name: Backend smoke test.
-  #         command: |
-  #           # your code here
+      - run:
+          name: Backend smoke test.
+          command: |
+            # your code here
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "${API_URL}"
+            if curl "${API_URL}/api/status" | grep "ok"
+            then
+              return 
+            else
+              return 1
+            fi
 
-  #     - run:
-  #         name: Frontend smoke test.
-  #         command: |
-  #           # your code here
-      # Here's where you will add some code to rollback on failure  
   
-  # cloudfront-update:
-  #   docker:
-  #     # Docker image here that supports AWS CLI
-  #     - image: amazon/aws-cli
-  #   steps:
-  #     # Checkout code from git
-  #     - run:
-  #         name: Install dependencies / save old workflow ID to kvdb.io
-  #         command: |
-  #           # your code here
-  #           export OLD_WORFLOW_ID=${}
-  #     - run:
-  #         name: Update cloudfront distribution
-  #         command: |
-  #           # your code here
-  #     # Here's where you will add some code to rollback on failure  
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - run:
+          name: Install dependencies / save old workflow ID to kvdb.io
+          command: |
+            # your code here
+            # export OLD_WORFLOW_ID= ${aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+              echo "Old Workflow ID: $OLD_WORFLOW_ID"
+              curl https://kvdb.io/5dR7n4E8kRzBgGRhLTTrZu/old_workflow_id_${CIRCLE_WORKFLOW_ID:0:7} -D '1
+            yum install -y tar gzip curl
+            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+            yum install -y nodejs
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml
+            --parameter-overrides workflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
+            --stack-name InitialStack
+      - destroy-environment
+      - revert-migrations
+      # Here's where you will add some code to rollback on failure  
 
 
 workflows:
