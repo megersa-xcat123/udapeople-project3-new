@@ -406,7 +406,7 @@ jobs:
             echo ${BACKEND_PUBLIC_IP}
             echo backend-${CIRCLE_WORKFLOW_ID:0:7}
             echo ${API_URL}
-            if curl "${API_URL}/api/status" | grep "ok"
+            if curl -s "${API_URL}/api/status" | grep "ok"
             then
               exit 0
             else
@@ -415,7 +415,7 @@ jobs:
       - run:
           name: frontend smoke test
           command: |
-            FORNTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.eu-central-1.amazonaws.com"
+            FORNTEND_WEBSITE="http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com"
             echo $FORNTEND_WEBSITE
             if curl -s ${FORNTEND_WEBSITE} | grep "Welcome"
             then
