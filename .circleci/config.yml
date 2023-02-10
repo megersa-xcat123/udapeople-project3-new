@@ -212,13 +212,17 @@ jobs:
       - image: cimg/base:stable
      steps:
       - checkout 
+      - install_awscli
       - run:
           name: Install dependencies
-          command: sudo apt install -y tar gzip 
+          command: |
+            sudo apt install -y tar gzip
+            # sudo apt  install python3.7
+            # curl -O https://bootstrap.pypa.io/get-pip.py
+            # python3 get-pip.py --user
       - run:
           name: Ensure back-end infrastructure exists
           command: |
-            pip install awscli
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -227,7 +231,6 @@ jobs:
       - run:
           name: Ensure front-end infrastructure exist
           command: |
-            pip install awscli
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project=udapeople \
