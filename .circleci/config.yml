@@ -437,12 +437,13 @@ jobs:
       - image: cimg/base:stable
     steps:
       - install_awscli
+      - install_nodejs
       - run:
           name: Install dependencies / save old workflow ID to kvdb.io
           command: |
             export OLD_WORFLOW_ID= ${aws cloudformation \
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)}
+            --no-paginate --output text}
             
             echo "Old Workflow ID: $OLD_WORFLOW_ID"
             curl https://kvdb.io/5dR7n4E8kRzBgGRhLTTrZu/old_workflow_id_${CIRCLE_WORKFLOW_ID:0:7} -D 1
@@ -457,6 +458,7 @@ jobs:
             --template-file .circleci/files/cloudfront.yml
             --parameter-overrides workflowID="${CIRCLE_WORKFLOW_ID:0:7}" \
             --stack-name InitialStack
+      
       - destroy-environment
       - revert-migrations
       
