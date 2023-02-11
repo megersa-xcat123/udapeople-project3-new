@@ -446,10 +446,10 @@ jobs:
             --no-paginate --output text )
             
             echo "Old Workflow ID: $OLD_WORFLOW_ID"
-            curl https://kvdb.io/5dR7n4E8kRzBgGRhLTTrZu/old_workflow_id_${CIRCLE_WORKFLOW_ID:0:7} -D 1
-            apt install -y tar gzip curl
-            curl -sL https://rpm.nodesource.com/setup_10.x | bash -
-            apt install -y nodejs
+            curl https://kvdb.io/5dR7n4E8kRzBgGRhLTTrZu/old_workflow_id -d "${OLD_WORFLOW_ID}"
+            # apt install -y tar gzip curl
+            # curl -sL https://rpm.nodesource.com/setup_10.x | bash -
+            # apt install -y nodejs
       - run:
           name: Update cloudfront distribution
           command: |
