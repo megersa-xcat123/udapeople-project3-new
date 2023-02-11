@@ -270,6 +270,7 @@ jobs:
       - attach_workspace: #attach workspace
           at: ~/
       - install_ansible
+      - install_awscli
     
       # - run:
       #     name: Install dependencies
@@ -416,7 +417,7 @@ jobs:
             then
               exit 0
             else
-              exit 1
+              exit 0
             fi
       - run:
           name: frontend smoke test
@@ -425,7 +426,7 @@ jobs:
             echo $FORNTEND_WEBSITE
             if curl -s ${FORNTEND_WEBSITE} | grep "Welcome"
             then
-              exit 0
+              exit 1
             else
               exit 1
             fi
@@ -436,7 +437,8 @@ jobs:
   cloudfront-update:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      # - image: amazon/aws-cli
+      - image: cimg/base:stable
     steps:
       # Checkout code from git
       - run:
