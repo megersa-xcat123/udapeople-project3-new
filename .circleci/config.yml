@@ -450,16 +450,18 @@ jobs:
             # apt install -y tar gzip curl
             # curl -sL https://rpm.nodesource.com/setup_10.x | bash -
             # apt install -y nodejs
+          
       - run:
           name: Update cloudfront distribution
           # working_directory: ../../.circleci/files
           command: |
             # your code here
             pwd
-            aws cloudformation deploy --template-file .circleci/files/cloudfront.yml --stack-name InitialStack \
+            aws cloudformation deploy --template-file ./.circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --tags project=udapeople
           
-            
+
       - destroy-environment
       - revert-migrations
       
