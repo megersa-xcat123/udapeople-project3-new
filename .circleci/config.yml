@@ -266,14 +266,7 @@ jobs:
           at: ~/
       - install_ansible
       - install_awscli
-    
-      # - run:
-      #     name: Install dependencies
-      #     working_directory: .circleci/ansible
-      #     command: |
-      #       pip install awscli
-      #       apk add --update ansible
-      #       ansible --version
+  
       - run:
           name: Configure server
           # working_directory: .circleci/ansible
@@ -454,21 +447,14 @@ jobs:
           
       - run:
           name: Update cloudfront distribution
-          # working_directory: ../../.circleci/files
+           # working_directory.circleci/files
           command: |
             # your code here
-            pwd
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
               --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople 
-
-            # cd .circleci/files
-            # aws cloudformation deploy --template-file cloudfront.yml \
-            # --stack-name InitialStack \
-            # --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --tags project=udapeople
-          
 
       - destroy-environment
       - revert-migrations
