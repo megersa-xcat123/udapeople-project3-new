@@ -261,7 +261,7 @@ jobs:
     steps:
       - checkout #-code from git
       - add_ssh_keys:
-          fingerprints: ["b4:e1:7c:19:1e:d9:a6:5c:88:a5:5e:86:2b:7e:a9:3d"]
+          fingerprints: ["	b4:e1:7c:19:1e:d9:a6:5c:88:a5:5e:86:2b:7e:a9:3d"]
       - attach_workspace: #attach workspace
           at: ~/
       - install_ansible
