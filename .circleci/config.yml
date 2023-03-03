@@ -450,12 +450,14 @@ jobs:
             # apt install -y tar gzip curl
             # curl -sL https://rpm.nodesource.com/setup_10.x | bash -
             # apt install -y nodejs
+            pwd
           
       - run:
           name: Update cloudfront distribution
           # working_directory: ../../.circleci/files
           command: |
             # your code here
+            pwd
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
