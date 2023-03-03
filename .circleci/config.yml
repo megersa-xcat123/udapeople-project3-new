@@ -450,6 +450,8 @@ jobs:
            # working_directory.circleci/files
           command: |
             # your code here
+            pwd 
+            ls -la
             aws cloudformation deploy \
               --template-file .circleci/files/cloudfront.yml \
               --stack-name InitialStack \
